@@ -1,0 +1,105 @@
+﻿<Window x:Class="VirtualMemSim.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Эмулятор виртуальной памяти" 
+        Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Панель управления и настроек слева -->
+        <GroupBox Header="Управление процессами" Margin="5">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Размер виртуальной памяти (КБ):" Width="200" VerticalAlignment="Center"/>
+                    <TextBox Width="80" x:Name="VirtualMemorySizeTextBox" ToolTip="Введите размер виртуальной памяти в КБ"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Размер оперативной памяти (КБ):" Width="200" VerticalAlignment="Center"/>
+                    <TextBox Width="80" Name="RAMSizeTextBox" ToolTip="Введите размер оперативной памяти в КБ"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Алгоритм замещения:" Width="200" VerticalAlignment="Center"/>
+                    <ComboBox Width="120" Name="ReplacementAlgorithmComboBox">
+                        <ComboBoxItem Content="FIFO" />
+                        <ComboBoxItem Content="LRU" />
+                        <ComboBoxItem Content="Second Chance" />
+                    </ComboBox>
+                </StackPanel>
+
+                <Button Content="Запустить процесс" Width="150" Margin="0,10,0,0" Click="StartProcessButton_Click"/>
+                <Button Content="Остановить процесс" Width="150" Margin="0,10,0,0" Click="StopProcessButton_Click"/>
+
+                <Separator Margin="10,20,10,10"/>
+
+                <TextBlock Text="Параметры процесса" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Размер страницы (КБ):" Width="200" VerticalAlignment="Center"/>
+                    <TextBox Width="80" Name="PageSizeTextBox" ToolTip="Введите размер страницы в КБ"/>
+                </StackPanel>
+
+                <Button Content="Применить параметры" Width="150" Margin="0,10,0,0" Click="ApplySettingsButton_Click"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Центральная часть - визуализация состояния памяти и таблицы страниц -->
+        <GroupBox Header="Состояние памяти" Grid.Column="1" Margin="5">
+            <StackPanel>
+                <Border BorderBrush="Black" BorderThickness="1" Height="200">
+                    <!-- Используем ItemsControl для вывода состояния памяти -->
+                    <ItemsControl Name="MemoryVisualization" ItemsSource="{Binding MemoryBlocks}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="20" Height="20" Margin="2" 
+                                        Background="{Binding BlockColor}">
+                                    <TextBlock Text="{Binding BlockId}" 
+                                               HorizontalAlignment="Center" 
+                                               VerticalAlignment="Center" 
+                                               FontSize="10"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+                <Button Content="Обновить память" Width="150" Margin="0,10,0,0" Click="UpdateMemoryButton_Click"/>
+                <TextBlock Text="Таблица страниц" FontWeight="Bold" FontSize="16" Margin="0,20,0,10"/>
+                <DataGrid Name="PageTableGrid" AutoGenerateColumns="False" HeadersVisibility="Column">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Процесс" Binding="{Binding ProcessId}" Width="*"/>
+                        <DataGridTextColumn Header="Номер страницы" Binding="{Binding PageNumber}" Width="*"/>
+                        <DataGridTextColumn Header="Фрейм" Binding="{Binding FrameNumber}" Width="*"/>
+                        <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Правая панель - Мониторинг производительности -->
+        <GroupBox Header="Мониторинг производительности" Grid.Column="2" Margin="5">
+            <StackPanel>
+                <TextBlock Text="Число обращений к памяти:" />
+                <TextBlock Name="MemoryAccessCount" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Число промахов страниц:" />
+                <TextBlock Name="PageFaultCount" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Процент успешных обращений:" />
+                <TextBlock Name="HitRate" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                <Button Content="Показать отчет" Width="150" Margin="0,20,0,0" Click="ShowReportButton_Click"/>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</Window>
